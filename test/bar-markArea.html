@@ -43,6 +43,7 @@ under the License.
         <div id="main4"></div>
         <div id="main5"></div>
         <div id="main6"></div>
+        <div id="main7"></div>
 
         <script>
         require([
@@ -493,5 +494,80 @@ under the License.
               });
           });
         </script>
+
+        <script>
+          require([
+              'echarts'
+          ], function (echarts) {
+              var categories = ['San Francisco', 'Houston', 'Washington', 'New York', 'Miami', 'Boston'];
+              var values = [28000, 33000, 30000, 27000, 31000, 39000];
+              function makeBarSeries(xAxisIndex, yAxisIndex) {
+                return {
+                  type: 'bar',
+                  xAxisIndex: xAxisIndex,
+                  yAxisIndex: yAxisIndex,
+                  data: values,
+                  markArea: {
+                    itemStyle: {
+                      color: 'rgba(0, 112, 242, 0.3)'
+                    },
+                    data: [[{ yAxis: 0 }, { yAxis: 0 }]]
+                  },
+                  markLine: {
+                    lineStyle: {
+                      color: 'red',
+                      width: 2,
+                      type: 'solid'
+                    },
+                    symbol: 'none',
+                    data: [{ yAxis: 0 }]
+                  }
+                };
+              }
+
+              var option = {
+                title: [
+                  {
+                    text: 'normal category axis',
+                    left: 12,
+                    top: 55,
+                    textStyle: { fontSize: 12 }
+                  },
+                  {
+                    text: 'inverse category axis',
+                    left: 12,
+                    top: 255,
+                    textStyle: { fontSize: 12 }
+                  }
+                ],
+                grid: [
+                  { left: 150, right: 40, top: 70, height: 130 },
+                  { left: 150, right: 40, top: 270, height: 130 }
+                ],
+                xAxis: [
+                  { type: 'value', gridIndex: 0 },
+                  { type: 'value', gridIndex: 1 }
+                ],
+                yAxis: [
+                  { type: 'category', gridIndex: 0, data: categories },
+                  { type: 'category', gridIndex: 1, data: categories, inverse: true }
+                ],
+                series: [
+                  makeBarSeries(0, 0),
+                  makeBarSeries(1, 1)
+                ]
+              };
+
+              var chart = testHelper.create(echarts, 'main7', {
+                  title: [
+                      'For both panels, the blue markArea and red markLine at **yAxis: 0** should cover **San Francisco**.',
+                      'In the inverse panel, the blue markArea must cover the first/top bar, not Houston. Fix #21652.'
+                  ],
+                  option: option,
+                  height: 480
+              });
+          });
+        </script>
+
     </body>
 </html>
