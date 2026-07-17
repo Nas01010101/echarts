@@ -121,6 +121,13 @@ class HeatmapView extends ChartView {
         this.group.removeAll();
 
         const coordSys = seriesModel.coordinateSystem;
+        // The coordinate system may be unresolved, e.g. a heatmap that
+        // references a `calendar`/`geo`/`bmap` coordinate system whose component
+        // is missing. Skip rendering instead of throwing on `coordSys.type`
+        // (`incrementalRender` already guards this the same way). See #19060.
+        if (!coordSys) {
+            return;
+        }
         if (coordSys.type === 'cartesian2d'
             || coordSys.type === 'calendar'
             || coordSys.type === 'matrix'
