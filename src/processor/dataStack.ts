@@ -150,7 +150,11 @@ function calculateStack(stackInfoList: StackInfo[]) {
 
                     // Considering positive stack, negative stack and empty data
                     if (
-                        stackStrategy === 'all' // single stack group
+                        // A null/NaN value in a lower series must be excluded from the
+                        // stack, otherwise it corrupts the sum. The other strategies
+                        // already reject it via their `val > 0`/`val < 0` checks, but
+                        // `all` needs an explicit guard. See #21685.
+                        (stackStrategy === 'all' && !isNaN(val)) // single stack group
                         || (stackStrategy === 'positive' && val > 0)
                         || (stackStrategy === 'negative' && val < 0)
                         || (stackStrategy === 'samesign' && sum >= 0 && val > 0) // All positive stack
