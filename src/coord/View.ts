@@ -559,12 +559,18 @@ function legacyCopyOverallTrans(
     target: Transformable | NullUndefined,
     overallTrans: Transformable,
     mtOverall: MatrixArray,
-    mtOverallInv: MatrixArray
+    mtOverallInv: MatrixArray | NullUndefined
 ): void {
     if (target) {
         copyTransform(target, overallTrans);
         matrixCopy(target.transform || (target.transform = []), mtOverall);
-        matrixCopy(target.invTransform || (target.invTransform = []), mtOverallInv);
+        const invTransform = target.invTransform || (target.invTransform = matrixCreate());
+        if (mtOverallInv) {
+            // `matrixInvert` returns null if the overall transform is singular (e.g., a
+            // zero-sized view rect when the chart container is hidden or sized 0x0);
+            // keep the last inverse in that case rather than crash.
+            matrixCopy(invTransform, mtOverallInv);
+        }
     }
 }
 
