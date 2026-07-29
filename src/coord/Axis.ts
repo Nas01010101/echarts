@@ -336,8 +336,10 @@ function fixOnBandTicksCoords(
         return false;
     }
 
+    const axisExtent = axis.getExtent();
+    const coordStep = axisExtent[1] >= axisExtent[0] ? bandWidth : -bandWidth;
     each(preTicksCoords, function (ticksItem) {
-        ticksItem.coord -= bandWidth / 2;
+        ticksItem.coord -= coordStep / 2;
     });
 
     const dataExtent = axis.scale.getExtent();
@@ -346,7 +348,7 @@ function fixOnBandTicksCoords(
         preTicksCoords.pop();
     }
     preTicksCoords.push({
-        coord: oldLast.coord + bandWidth,
+        coord: oldLast.coord + coordStep,
         tick: {value: dataExtent[1] + 1},
     });
 
